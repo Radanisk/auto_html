@@ -33,7 +33,7 @@ module AutoHtmlFor
         raw_attr = missing_cache_column.gsub(suffix, '')
         define_method(missing_cache_column) do
           val = self[raw_attr]
-          auto_html(val, &proc)
+          auto_html(val, self, &proc)
         end
       end
       
@@ -42,11 +42,11 @@ module AutoHtmlFor
         raw_attr = cache_column.gsub(suffix, '')
         define_method("#{raw_attr}=") do |val|
           self[raw_attr] = val
-          result = auto_html(val, &proc)
+          result = auto_html(val, self, &proc)
           self.send("#{cache_column}=", result)
           val
         end
-        
+
         define_method(cache_column) do
           result = self[cache_column]
           result.respond_to?(:html_safe) ? result.html_safe : result
@@ -60,5 +60,3 @@ module AutoHtmlFor
     include AutoHtml
   end
 end
-
-
