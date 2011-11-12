@@ -15,7 +15,7 @@ module AutoHtmlFor
   end
 
   module ClassMethods
-    def auto_html_for(raw_attrs, &proc)
+    def auto_html_for(raw_attrs, options = {}, &proc)
       include AutoHtmlFor::InstanceMethods
 
       if defined?(ActiveRecord) == "constant"
@@ -33,7 +33,7 @@ module AutoHtmlFor
         raw_attr = missing_cache_column.gsub(suffix, '')
         define_method(missing_cache_column) do
           val = self[raw_attr]
-          auto_html(val, self, &proc)
+          auto_html(val, options, self, &proc)
         end
       end
       
@@ -42,7 +42,7 @@ module AutoHtmlFor
         raw_attr = cache_column.gsub(suffix, '')
         define_method("#{raw_attr}=") do |val|
           self[raw_attr] = val
-          result = auto_html(val, self, &proc)
+          result = auto_html(val, options, self, &proc)
           self.send("#{cache_column}=", result)
           val
         end
